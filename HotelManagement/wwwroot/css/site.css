@@ -1,4 +1,4 @@
-html {
+﻿/*html {
   font-size: 14px;
 }
 
@@ -19,4 +19,103 @@ html {
 
 body {
   margin-bottom: 60px;
+}*/
+/* Định nghĩa biến màu */
+:root {
+    --primary-color: #3498db; /* xanh dương đậm */
+    --secondary-color: #eef5ff; /* xanh dương nhạt */
+    --background-light: #f0f8ff; /* nền xanh rất nhạt */
+    --card-bg: #ffffff; /* nền thẻ trắng */
+    --text-dark: #2c3e50;
+}
+
+body {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--primary-color) !important;
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: white !important;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #f1c40f !important;
+    }
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+        border-color: #2980b9;
+    }
+
+/* Cards */
+.card {
+    background-color: var(--card-bg);
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-radius: 8px;
+}
+
+.card-header {
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid #d4e3f5;
+    font-weight: bold;
+}
+
+/* Tables */
+.table {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+    .table thead th {
+        background-color: var(--secondary-color);
+        border-bottom: 2px solid var(--primary-color);
+        color: var(--text-dark);
+    }
+
+/* Alerts */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem 0;
+    margin-top: 2rem;
 }

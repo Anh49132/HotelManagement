@@ -36,11 +36,18 @@
                 <span asp-validation-for="CheckOutDate" class="text-danger"></span>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <div class="form-group">
                 <label asp-for="NumberOfAdults" class="control-label">Số người lớn</label>
                 <input asp-for="NumberOfAdults" class="form-control" id="adults" />
                 <span asp-validation-for="NumberOfAdults" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="NumberOfChildren" class="control-label">Số trẻ em</label>
+                <input asp-for="NumberOfChildren" class="form-control" id="children" />
+                <span asp-validation-for="NumberOfChildren" class="text-danger"></span>
             </div>
         </div>
     </div>

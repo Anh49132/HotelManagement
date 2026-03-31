@@ -30,26 +30,19 @@ namespace HotelManagement.Controllers
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var booking = await _context.Bookings
                 .Include(b => b.Customer)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
+            if (booking == null) return NotFound();
 
             return View(booking);
         }
-        //***
-       
+        // ===================== HÀM HỖ TRỢ =====================
 
-        //****
-        private List<Room> GetAvailableRooms(DateTime checkIn, DateTime checkOut, int capacity)
+        // Private: lấy danh sách phòng trống (đổi tên để không trùng với action)
+        private List<Room> GetAvailableRoomsList(DateTime checkIn, DateTime checkOut, int capacity)
         {
             var allRooms = _context.Rooms
                 .Include(r => r.RoomType)
@@ -59,6 +52,7 @@ namespace HotelManagement.Controllers
             var bookedRoomIds = _context.BookingDetails
                 .Include(bd => bd.Booking)
                 .Where(bd => bd.Booking.Status != "Cancelled" &&
+                             bd.Booking.Status != "CheckedOut" &&
                              bd.Booking.CheckInDate < checkOut &&
                              bd.Booking.CheckOutDate > checkIn)
                 .Select(bd => bd.RoomId)
@@ -69,6 +63,27 @@ namespace HotelManagement.Controllers
                 .ToList();
         }
 
+        // Private: kiểm tra phòng có trống không
+        private bool IsRoomAvailable(int roomId, DateTime checkIn, DateTime checkOut)
+        {
+            return !_context.BookingDetails
+                .Include(bd => bd.Booking)
+                .Any(bd => bd.RoomId == roomId &&
+                           bd.Booking.Status != "Cancelled" &&
+                           bd.Booking.Status != "CheckedOut" &&
+                           bd.Booking.CheckInDate < checkOut &&
+                           bd.Booking.CheckOutDate > checkIn);
+        }
+
+        // ===================== AJAX =====================
+        [HttpGet]
+        public IActionResult GetAvailableRooms(DateTime checkIn, DateTime checkOut, int capacity)
+        {
+            var rooms = GetAvailableRoomsList(checkIn, checkOut, capacity);
+            return PartialView("_RoomCheckboxes", rooms);
+        }
+
+        // ===================== CREATE =====================
         // GET: Bookings/Create
         public IActionResult Create()
         {
@@ -77,29 +92,14 @@ namespace HotelManagement.Controllers
                 CheckInDate = DateTime.Now.Date,
                 CheckOutDate = DateTime.Now.Date.AddDays(1),
                 NumberOfAdults = 1,
-                AvailableRooms = GetAvailableRooms(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), 1)
+                AvailableRooms = GetAvailableRoomsList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), 1)
             };
             ViewBag.Customers = new SelectList(_context.Customers, "Id", "FullName");
             return View(model);
         }
-        //****
-        private bool IsRoomAvailable(int roomId, DateTime checkIn, DateTime checkOut)
-        {
-            return !_context.BookingDetails
-                .Include(bd => bd.Booking)
-                .Any(bd => bd.RoomId == roomId &&
-                           bd.Booking.Status != "Cancelled" &&
-                           bd.Booking.CheckInDate < checkOut &&
-                           bd.Booking.CheckOutDate > checkIn);
-        }
-       
-
-
-        // POST: Bookings/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Bookings/Cre 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateBookingViewModel model)
         {
             ModelState.Remove("AvailableRooms");
@@ -111,8 +111,8 @@ namespace HotelManagement.Controllers
             }
 
             if (ModelState.IsValid)
-            {
-                // Kiểm tra lại phòng trống
+          {
+
                 bool allAvailable = true;
                 foreach (var roomId in model.SelectedRoomIds)
                 {
@@ -127,11 +127,11 @@ namespace HotelManagement.Controllers
                 {
                     ModelState.AddModelError("", "Một số phòng đã được đặt trong khoảng thời gian này.");
                     ViewBag.Customers = new SelectList(_context.Customers, "Id", "FullName", model.CustomerId);
-                    model.AvailableRooms = GetAvailableRooms(model.CheckInDate, model.CheckOutDate, model.NumberOfAdults);
+                    model.AvailableRooms = GetAvailableRoomsList(model.CheckInDate, model.CheckOutDate, model.NumberOfAdults);
                     return View(model);
                 }
 
-                // Tạo booking
+                
                 var booking = new Booking
                 {
                     CustomerId = model.CustomerId,
@@ -145,7 +145,7 @@ namespace HotelManagement.Controllers
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
 
-                // Thêm chi tiết phòng
+                
                 int nights = (model.CheckOutDate - model.CheckInDate).Days;
                 decimal totalPrice = 0;
                 foreach (var roomId in model.SelectedRoomIds)
@@ -167,37 +167,28 @@ namespace HotelManagement.Controllers
             }
 
             ViewBag.Customers = new SelectList(_context.Customers, "Id", "FullName", model.CustomerId);
-            model.AvailableRooms = GetAvailableRooms(model.CheckInDate, model.CheckOutDate, model.NumberOfAdults);
+            model.AvailableRooms = GetAvailableRoomsList(model.CheckInDate, model.CheckOutDate, model.NumberOfAdults);
             return View(model);
         }
-        // GET: Bookings/Edit/5
+
+        // ===================== EDIT =====================
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", booking.CustomerId);
-            return View(booking);
-        }
+            if (booking == null) return NotFound();
 
-        // POST: Bookings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "FullName", booking.CustomerId);
+            return View(booking);
+       }
+
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CustomerId,CheckInDate,CheckOutDate,NumberOfAdults,NumberOfChildren,TotalPrice,Status")] Booking booking)
         {
-            if (id != booking.Id)
-            {
-                return NotFound();
-            }
+            if (id != booking.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -208,51 +199,36 @@ namespace HotelManagement.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookingExists(booking.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!BookingExists(booking.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", booking.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "FullName", booking.CustomerId);
             return View(booking);
         }
 
-        // GET: Bookings/Delete/5
+        // ===================== DELETE =====================
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var booking = await _context.Bookings
                 .Include(b => b.Customer)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
+            if (booking == null) return NotFound();
 
             return View(booking);
         }
 
-        // POST: Bookings/Delete/5
+
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
-            if (booking != null)
-            {
-                _context.Bookings.Remove(booking);
-            }
-
+            if (booking != null) _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -261,5 +237,8 @@ namespace HotelManagement.Controllers
         {
             return _context.Bookings.Any(e => e.Id == id);
         }
+    
+    
     }
+
 }

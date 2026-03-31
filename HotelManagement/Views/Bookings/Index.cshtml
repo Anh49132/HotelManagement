@@ -3,71 +3,44 @@
 @model IEnumerable<Booking>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách đặt phòng";
 }
 
-<h1>Index</h1>
+<h1>Danh sách đặt phòng</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Đặt phòng mới</a>
 </p>
-<table class="table">
+
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CheckInDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CheckOutDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumberOfAdults)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumberOfChildren)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
+            <th>Khách hàng</th>
+            <th>Ngày nhận</th>
+            <th>Ngày trả</th>
+            <th>Số người lớn</th>
+            <th>Số trẻ em</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CheckInDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CheckOutDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberOfAdults)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberOfChildren)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Customer?.FullName</td>
+                <td>@item.CheckInDate.ToString("dd/MM/yyyy")</td>
+                <td>@item.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                <td>@item.NumberOfAdults</td>
+                <td>@item.NumberOfChildren</td>
+                <td>@item.TotalPrice.ToString("N0") VNĐ</td>
+                <td>@item.Status</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
     </tbody>
-</table>
+</table>>
