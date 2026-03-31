@@ -1,0 +1,55 @@
+﻿@model IEnumerable<HotelManagement.Models.Entities.Room>
+
+@{
+    ViewData["Title"] = "Quản lý phòng";
+}
+
+<h1>Danh sách phòng</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Thêm phòng mới</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Số phòng</th>
+            <th>Loại phòng</th>
+            <th>Giá/đêm</th>
+            <th>Tầng</th>
+            <th>Trạng thái</th>
+            <th>Mô tả</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.RoomNumber</td>
+                <td>@item.RoomType?.Name</td>
+                <td>@(item.RoomType?.PricePerNight.ToString("N0")) VNĐ</td>
+                <td>@item.Floor</td>
+                <td>
+                    @if (item.Status == "Available")
+                    {
+                        <span class="badge bg-success">Trống</span>
+                    }
+                    else if (item.Status == "Occupied")
+                    {
+                        <span class="badge bg-danger">Đang ở</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">Bảo trì</span>
+                    }
+                </td>
+                <td>@item.Description</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

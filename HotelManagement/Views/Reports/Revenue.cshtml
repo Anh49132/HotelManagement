@@ -1,0 +1,69 @@
+﻿@model IEnumerable<HotelManagement.Models.ViewModels.RevenueReportViewModel>
+
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+    int year = ViewBag.Year;
+    int month = ViewBag.Month;
+}
+
+<h1>Báo cáo doanh thu tháng @month/@year</h1>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="get" class="form-inline">
+            <div class="form-group mr-2">
+                <label>Năm: </label>
+                <select name="year" class="form-control">
+                    @for (int y = 2023; y <= DateTime.Now.Year; y++)
+                    {
+                        <option value="@y" selected="@(y == year)">@y</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <label>Tháng: </label>
+                <select name="month" class="form-control">
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        <option value="@m" selected="@(m == month)">@m</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Xem</button>
+        </form>
+    </div>
+    <div class="col-md-6 text-right">
+        <h4>Tổng doanh thu: <span class="text-success">@ViewBag.TotalRevenue.ToString("N0") VNĐ</span></h4>
+        <p>Tổng số hóa đơn: @ViewBag.TotalBookings | Trung bình: @ViewBag.AverageRevenue.ToString("N0") VNĐ</p>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Ngày</th>
+            <th>Số hóa đơn</th>
+            <th>Doanh thu</th>
+            <th>Trung bình/hóa đơn</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Date.ToString("dd/MM/yyyy")</td>
+                <td>@item.TotalBookings</td>
+                <td>@item.TotalRevenue.ToString("N0") VNĐ</td>
+                <td>@item.AverageRevenuePerBooking.ToString("N0") VNĐ</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Occupancy" asp-route-year="@year" asp-route-month="@month" class="btn btn-info">Xem báo cáo công suất phòng</a>
+</div>
+
+<a asp-action="ExportRevenueToExcel" asp-route-year="@year" asp-route-month="@month" class="btn btn-success">
+    Xuất Excel
+</a>

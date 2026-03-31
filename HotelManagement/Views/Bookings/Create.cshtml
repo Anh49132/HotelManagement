@@ -1,0 +1,131 @@
+﻿@model HotelManagement.Models.ViewModels.CreateBookingViewModel
+
+@{
+    ViewData["Title"] = "Đặt phòng mới";
+}
+
+<h1>Đặt phòng mới</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="CustomerId" class="control-label">Khách hàng</label>
+                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.Customers">
+                    <option value="">-- Chọn khách hàng --</option>
+                </select>
+                <span asp-validation-for="CustomerId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="CheckInDate" class="control-label">Ngày nhận phòng</label>
+                <input asp-for="CheckInDate" type="date" class="form-control" id="checkInDate" />
+                <span asp-validation-for="CheckInDate" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="CheckOutDate" class="control-label">Ngày trả phòng</label>
+                <input asp-for="CheckOutDate" type="date" class="form-control" id="checkOutDate" />
+                <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="NumberOfAdults" class="control-label">Số người lớn</label>
+                <input asp-for="NumberOfAdults" class="form-control" id="adults" />
+                <span asp-validation-for="NumberOfAdults" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">Chọn phòng</label>
+        <div id="roomsContainer">
+            @if (Model.AvailableRooms != null && Model.AvailableRooms.Any())
+            {
+                foreach (var room in Model.AvailableRooms)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="SelectedRoomIds" value="@room.Id" id="room_@room.Id" data-price="@room.RoomType.PricePerNight" />
+                        <label class="form-check-label" for="room_@room.Id">
+                            @room.RoomNumber - @room.RoomType.Name (Giá: @room.RoomType.PricePerNight.ToString("N0") VNĐ/đêm, Sức chứa: @room.RoomType.Capacity)
+                        </label>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-warning">Không có phòng trống trong khoảng thời gian này.</div>
+            }
+        </div>
+        <span id="roomError" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Tổng tiền dự kiến: <span id="totalPriceDisplay">0</span> VNĐ</label>
+        <input type="hidden" asp-for="TotalPrice" id="totalPrice" />
+    </div>
+
+    <div class="form-group mt-3">
+        <input type="submit" value="Đặt phòng" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function() {
+            function updateAvailableRooms() {
+                var checkIn = $('#checkInDate').val();
+                var checkOut = $('#checkOutDate').val();
+                var adults = $('#adults').val();
+                if (checkIn && checkOut && adults) {
+                    $.ajax({
+                        url: '@Url.Action("GetAvailableRooms", "Bookings")',
+                        data: { checkIn: checkIn, checkOut: checkOut, capacity: adults },
+                        type: 'GET',
+                        success: function(data) {
+                            $('#roomsContainer').html(data);
+                            calculateTotal();
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("AJAX error: " + error);
+                            $('#roomsContainer').html('<div class="alert alert-danger">Lỗi tải danh sách phòng: ' + error + '</div>');
+                        }
+                    });
+                }
+            }
+
+            function calculateTotal() {
+                var checkIn = $('#checkInDate').val();
+                var checkOut = $('#checkOutDate').val();
+                if (!checkIn || !checkOut) return;
+                var nights = (new Date(checkOut) - new Date(checkIn)) / (1000 * 3600 * 24);
+                if (nights <= 0) nights = 0;
+
+                var total = 0;
+                $('input[name="SelectedRoomIds"]:checked').each(function() {
+                    var price = parseFloat($(this).data('price'));
+                    total += price * nights;
+                });
+                $('#totalPriceDisplay').text(total.toLocaleString('vi-VN'));
+                $('#totalPrice').val(total);
+            }
+
+            $('#checkInDate, #checkOutDate, #adults').on('change', updateAvailableRooms);
+            $(document).on('change', 'input[name="SelectedRoomIds"]', calculateTotal);
+
+            calculateTotal();
+        });
+    </script>
+}
