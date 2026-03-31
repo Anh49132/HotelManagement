@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using HotelManagement.Data;
+using HotelManagement.Models.Entities;
 
 namespace HotelManagement.Controllers
 {
