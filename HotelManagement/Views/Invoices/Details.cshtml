@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-﻿@model HotelManagement.Models.Entities.Invoice
-=======
-﻿@model Invoice
-
->>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
+@model HotelManagement.Models.Entities.Invoice
 
 @{
     ViewData["Title"] = "Chi tiết hóa đơn";
@@ -63,7 +58,6 @@
         <dt class="col-sm-3">Phương thức</dt>
         <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.PaymentMethod) ? "Chưa có" : Model.PaymentMethod)</dd>
     </dl>
-<<<<<<< HEAD
 
     @if (Model.ServiceUsages != null && Model.ServiceUsages.Any())
     {
@@ -92,8 +86,6 @@
             </tbody>
         </table>
     }
-=======
->>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
 </div>
 
 <div>
@@ -102,8 +94,4 @@
     {
         <a asp-action="Pay" asp-route-id="@Model.Id" class="btn btn-success">Thanh toán</a>
     }
-<<<<<<< HEAD
-</div>v>
-=======
 </div>
->>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
