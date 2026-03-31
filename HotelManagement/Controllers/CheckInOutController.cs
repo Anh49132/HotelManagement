@@ -159,7 +159,7 @@ namespace HotelManagement.Controllers
                 TotalAmount = roomCharge + serviceCharge,
                 PaidAmount = 0,
                 Status = "Unpaid",
-                PaymentMethod = "Cash" // Có thể thay đổi sau
+                PaymentMethod = "Cash"
             };
 
             _context.Invoices.Add(invoice);

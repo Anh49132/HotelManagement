@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 ﻿@model IEnumerable<HotelManagement.Models.Entities.Invoice>
 
+=======
+﻿@model IEnumerable<Invoice>
+>>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
 @{
     ViewData["Title"] = "Quản lý hóa đơn";
 }
@@ -59,7 +63,11 @@
                     {
                         <a asp-action="Pay" asp-route-id="@item.Id" class="btn btn-sm btn-success">Thanh toán</a>
                     }
+<<<<<<< HEAD
                 </td>
+=======
+                 </td>
+>>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
             </tr>
         }
     </tbody>

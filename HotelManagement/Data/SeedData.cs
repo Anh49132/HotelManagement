@@ -73,6 +73,7 @@ namespace HotelManagement.Data
                 );
                 await dbContext.SaveChangesAsync();
             }
+
             // Tạo dịch vụ mẫu nếu chưa có
             if (!dbContext.Services.Any())
             {
@@ -84,6 +85,7 @@ namespace HotelManagement.Data
                 );
                 await dbContext.SaveChangesAsync();
             }
+
             // ========== THÊM DỮ LIỆU MẪU ==========
 
             // Tạo khách hàng mẫu

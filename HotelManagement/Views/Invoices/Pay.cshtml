@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 ﻿@model HotelManagement.Models.Entities.Invoice
 
+=======
+﻿@model Invoice
+>>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
 @{
     ViewData["Title"] = "Thanh toán hóa đơn";
     decimal remaining = Model.TotalAmount - Model.PaidAmount;
@@ -8,24 +12,32 @@
 <h1>Thanh toán hóa đơn #@Model.Id</h1>
 
 <div class="row">
+<<<<<<< HEAD
     <div class="col-md-7">
+=======
+    <div class="col-md-6">
+>>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
         <div class="card mb-3">
             <div class="card-header">
                 <strong>Thông tin hóa đơn</strong>
             </div>
             <div class="card-body">
                 <p><strong>Khách hàng:</strong> @Model.Booking?.Customer?.FullName</p>
+<<<<<<< HEAD
                 <p><strong>Tổng tiền phòng:</strong> @Model.RoomCharge.ToString("N0") VNĐ</p>
                 @if (Model.ServiceCharge > 0)
                 {
                     <p><strong>Tổng tiền dịch vụ:</strong> @Model.ServiceCharge.ToString("N0") VNĐ</p>
                 }
+=======
+>>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
                 <p><strong>Tổng tiền:</strong> @Model.TotalAmount.ToString("N0") VNĐ</p>
                 <p><strong>Đã thanh toán:</strong> @Model.PaidAmount.ToString("N0") VNĐ</p>
                 <p><strong>Còn lại:</strong> <span class="text-danger">@remaining.ToString("N0") VNĐ</span></p>
             </div>
         </div>
 
+<<<<<<< HEAD
         @if (Model.ServiceUsages != null && Model.ServiceUsages.Any())
         {
             <div class="card mb-3">
@@ -60,6 +72,8 @@
             </div>
         }
 
+=======
+>>>>>>> 0e5b468c3f642612c1a68e3e246d48f6919323db
         <form asp-action="Pay" method="post">
             <input type="hidden" name="id" value="@Model.Id" />
             <div class="form-group">

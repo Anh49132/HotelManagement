@@ -1,5 +1,4 @@
-﻿// Data/AppDbContext.cs
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using HotelManagement.Models.Entities;
 
@@ -17,6 +16,7 @@ namespace HotelManagement.Data
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<ServiceUsage> ServiceUsages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -31,8 +31,6 @@ namespace HotelManagement.Data
                 .HasOne(bd => bd.Room)
                 .WithMany()
                 .HasForeignKey(bd => bd.RoomId);
-
-
 
             // Ràng buộc: Một phòng không thể được đặt trùng thời gian (sẽ kiểm tra bằng code)
         }
