@@ -1,0 +1,81 @@
+﻿@model HotelManagement.Models.Entities.Invoice
+
+@{
+    ViewData["Title"] = "Thanh toán hóa đơn";
+    decimal remaining = Model.TotalAmount - Model.PaidAmount;
+}
+
+<h1>Thanh toán hóa đơn #@Model.Id</h1>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card mb-3">
+            <div class="card-header">
+                <strong>Thông tin hóa đơn</strong>
+            </div>
+            <div class="card-body">
+                <p><strong>Khách hàng:</strong> @Model.Booking?.Customer?.FullName</p>
+                <p><strong>Tổng tiền phòng:</strong> @Model.RoomCharge.ToString("N0") VNĐ</p>
+                @if (Model.ServiceCharge > 0)
+                {
+                    <p><strong>Tổng tiền dịch vụ:</strong> @Model.ServiceCharge.ToString("N0") VNĐ</p>
+                }
+                <p><strong>Tổng tiền:</strong> @Model.TotalAmount.ToString("N0") VNĐ</p>
+                <p><strong>Đã thanh toán:</strong> @Model.PaidAmount.ToString("N0") VNĐ</p>
+                <p><strong>Còn lại:</strong> <span class="text-danger">@remaining.ToString("N0") VNĐ</span></p>
+            </div>
+        </div>
+
+        @if (Model.ServiceUsages != null && Model.ServiceUsages.Any())
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <strong>Chi tiết dịch vụ đã sử dụng</strong>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Dịch vụ</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var usage in Model.ServiceUsages)
+                            {
+                                <tr>
+                                    <td>@usage.Service.Name</td>
+                                    <td>@usage.Quantity</td>
+                                    <td>@usage.Service.Price.ToString("N0") VNĐ</td>
+                                    <td>@usage.TotalPrice.ToString("N0") VNĐ</td>
+                                    <td>@usage.Notes</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <form asp-action="Pay" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div class="form-group">
+                <label>Phương thức thanh toán</label>
+                <select name="paymentMethod" class="form-control" asp-items="ViewBag.PaymentMethods" required>
+                    <option value="">-- Chọn --</option>
+                </select>
+            </div>
+            <div class="form-group mt-2">
+                <label>Số tiền thanh toán (tối đa @remaining.ToString("N0") VNĐ)</label>
+                <input type="number" name="paidAmount" class="form-control" min="1" max="@remaining" step="1" required />
+            </div>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Xác nhận thanh toán</button>
+                <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

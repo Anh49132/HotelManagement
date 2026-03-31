@@ -1,0 +1,51 @@
+﻿@model IEnumerable<HotelManagement.Models.Entities.Employee>
+
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+}
+
+<h1>Danh sách nhân viên</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Thêm nhân viên</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Họ tên</th>
+            <th>Địa chỉ</th>
+            <th>Ngày vào làm</th>
+            <th>Trạng thái</th>
+            <th>Vai trò</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Email</td>
+                <td>@item.FullName</td>
+                <td>@item.Address</td>
+                <td>@item.HireDate.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <span class="badge bg-success">Hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Khóa</span>
+                    }
+                </td>
+                <td>@(ViewBag.EmployeeRoles[item.Id])</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

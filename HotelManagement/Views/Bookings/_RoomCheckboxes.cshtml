@@ -1,0 +1,18 @@
+﻿@model List<HotelManagement.Models.Entities.Room>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var room in Model)
+    {
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="SelectedRoomIds" value="@room.Id" id="room_@room.Id" data-price="@room.RoomType.PricePerNight" />
+            <label class="form-check-label" for="room_@room.Id">
+                @room.RoomNumber - @room.RoomType.Name (Giá: @room.RoomType.PricePerNight.ToString("N0") VNĐ/đêm, Sức chứa: @room.RoomType.Capacity)
+            </label>
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-warning">Không có phòng trống trong khoảng thời gian này.</div>
+}

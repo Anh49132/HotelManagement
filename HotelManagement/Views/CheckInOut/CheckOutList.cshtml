@@ -1,0 +1,54 @@
+﻿@model IEnumerable<HotelManagement.Models.Entities.Booking>
+
+@{
+    ViewData["Title"] = "Check-out";
+}
+
+<h1>Danh sách khách đang ở</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Không có khách nào đang ở.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Mã booking</th>
+                <th>Khách hàng</th>
+                <th>Ngày nhận</th>
+                <th>Ngày trả</th>
+                <th>Số phòng</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.Id</td>
+                    <td>@booking.Customer?.FullName</td>
+                    <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+                    <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @string.Join(", ", booking.BookingDetails.Select(bd => bd.Room?.RoomNumber))
+                    </td>
+                    <td>
+                        <a asp-action="CheckOut" asp-route-id="@booking.Id" class="btn btn-sm btn-danger">Check-out</a>
+                        <a asp-action="AddService" asp-route-bookingId="@booking.Id" class="btn btn-sm btn-info">Thêm dịch vụ</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div>
+    <a asp-action="Index" class="btn btn-primary">Danh sách check-in</a>
+</div>

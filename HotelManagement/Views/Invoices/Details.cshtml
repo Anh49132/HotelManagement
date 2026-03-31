@@ -1,0 +1,97 @@
+﻿@model HotelManagement.Models.Entities.Invoice
+
+@{
+    ViewData["Title"] = "Chi tiết hóa đơn";
+}
+
+<h1>Chi tiết hóa đơn #@Model.Id</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Khách hàng</dt>
+        <dd class="col-sm-9">@Model.Booking?.Customer?.FullName</dd>
+
+        <dt class="col-sm-3">Ngày lập</dt>
+        <dd class="col-sm-9">@Model.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</dd>
+
+        <dt class="col-sm-3">Mã booking</dt>
+        <dd class="col-sm-9">@Model.BookingId</dd>
+
+        <dt class="col-sm-3">Ngày nhận phòng</dt>
+        <dd class="col-sm-9">@Model.Booking?.CheckInDate.ToString("dd/MM/yyyy")</dd>
+
+        <dt class="col-sm-3">Ngày trả phòng</dt>
+        <dd class="col-sm-9">@Model.Booking?.CheckOutDate.ToString("dd/MM/yyyy")</dd>
+
+        <dt class="col-sm-3">Tiền phòng</dt>
+        <dd class="col-sm-9">@Model.RoomCharge.ToString("N0") VNĐ</dd>
+
+        <dt class="col-sm-3">Tiền dịch vụ</dt>
+        <dd class="col-sm-9">@Model.ServiceCharge.ToString("N0") VNĐ</dd>
+
+        <dt class="col-sm-3">Tổng tiền</dt>
+        <dd class="col-sm-9"><strong>@Model.TotalAmount.ToString("N0") VNĐ</strong></dd>
+
+        <dt class="col-sm-3">Đã thanh toán</dt>
+        <dd class="col-sm-9">@Model.PaidAmount.ToString("N0") VNĐ</dd>
+
+        <dt class="col-sm-3">Còn lại</dt>
+        <dd class="col-sm-9">@((Model.TotalAmount - Model.PaidAmount).ToString("N0")) VNĐ</dd>
+
+        <dt class="col-sm-3">Trạng thái</dt>
+        <dd class="col-sm-9">
+            @if (Model.Status == "Paid")
+            {
+                <span class="badge bg-success">Đã thanh toán</span>
+            }
+            else if (Model.Status == "Partial")
+            {
+                <span class="badge bg-warning">Thanh toán một phần</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Chưa thanh toán</span>
+            }
+        </dd>
+
+        <dt class="col-sm-3">Phương thức</dt>
+        <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.PaymentMethod) ? "Chưa có" : Model.PaymentMethod)</dd>
+    </dl>
+
+    @if (Model.ServiceUsages != null && Model.ServiceUsages.Any())
+    {
+        <h4>Chi tiết dịch vụ</h4>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Dịch vụ</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usage in Model.ServiceUsages)
+                {
+                    <tr>
+                        <td>@usage.Service.Name</td>
+                        <td>@usage.Service.Price.ToString("N0") VNĐ</td>
+                        <td>@usage.Quantity</td>
+                        <td>@usage.TotalPrice.ToString("N0") VNĐ</td>
+                        <td>@usage.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+    @if (Model.Status != "Paid")
+    {
+        <a asp-action="Pay" asp-route-id="@Model.Id" class="btn btn-success">Thanh toán</a>
+    }
+</div>v>

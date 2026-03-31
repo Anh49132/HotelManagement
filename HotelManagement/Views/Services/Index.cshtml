@@ -1,0 +1,39 @@
+﻿@model IEnumerable<HotelManagement.Models.Entities.Service>
+
+@{
+    ViewData["Title"] = "Quản lý dịch vụ";
+}
+
+<h1>Danh sách dịch vụ</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Thêm dịch vụ</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Tên dịch vụ</th>
+            <th>Đơn vị</th>
+            <th>Đơn giá (VNĐ)</th>
+            <th>Mô tả</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Unit</td>
+                <td>@item.Price.ToString("N0")</td>
+                <td>@item.Description</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

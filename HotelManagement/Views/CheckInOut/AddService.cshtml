@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Thêm dịch vụ";
+    int bookingId = ViewBag.BookingId;
+}
+
+<h1>Thêm dịch vụ cho booking #@bookingId</h1>
+
+<form asp-action="AddService" method="post">
+    <input type="hidden" name="bookingId" value="@bookingId" />
+    <div class="form-group">
+        <label>Dịch vụ</label>
+        <select name="serviceId" class="form-control" asp-items="ViewBag.Services">
+            <option value="">-- Chọn --</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Số lượng</label>
+        <input type="number" name="quantity" class="form-control" min="1" required />
+    </div>
+    <div class="form-group">
+        <label>Ghi chú (nếu có)</label>
+        <textarea name="notes" class="form-control" rows="2"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Thêm</button>
+    <a asp-action="CheckOutList" class="btn btn-secondary mt-2">Hủy</a>
+</form>
