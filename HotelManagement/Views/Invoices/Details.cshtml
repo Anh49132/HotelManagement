@@ -19,6 +19,18 @@
         <dt class="col-sm-3">Mã booking</dt>
         <dd class="col-sm-9">@Model.BookingId</dd>
 
+        <dt class="col-sm-3">Số phòng</dt>
+        <dd class="col-sm-9">
+            @if (Model.Booking?.BookingDetails != null && Model.Booking.BookingDetails.Any())
+            {
+                @string.Join(", ", Model.Booking.BookingDetails.Select(bd => bd.Room?.RoomNumber))
+            }
+            else
+            {
+                <span>Không có</span>
+            }
+        </dd>
+
         <dt class="col-sm-3">Ngày nhận phòng</dt>
         <dd class="col-sm-9">@Model.Booking?.CheckInDate.ToString("dd/MM/yyyy")</dd>
 
@@ -71,8 +83,8 @@
                     <th>Số lượng</th>
                     <th>Thành tiền</th>
                     <th>Ghi chú</th>
-                </tr>
-            </thead>
+   
+                </thead>
             <tbody>
                 @foreach (var usage in Model.ServiceUsages)
                 {
