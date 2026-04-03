@@ -1,6 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Thêm dịch vụ";
     int bookingId = ViewBag.BookingId;
+    var services = ViewBag.Services as SelectList;
+    var priceDict = ViewBag.ServicePrices as Dictionary<int, decimal> ?? new Dictionary<int, decimal>();
 }
 
 <h1>Thêm dịch vụ cho booking #@bookingId</h1>
@@ -9,13 +11,21 @@
     <input type="hidden" name="bookingId" value="@bookingId" />
     <div class="form-group">
         <label>Dịch vụ</label>
-        <select name="serviceId" class="form-control" asp-items="ViewBag.Services">
+        <select name="serviceId" id="serviceId" class="form-control" asp-items="ViewBag.Services">
             <option value="">-- Chọn --</option>
         </select>
     </div>
     <div class="form-group">
+        <label>Đơn giá (VNĐ)</label>
+        <input type="text" id="unitPrice" class="form-control" readonly />
+    </div>
+    <div class="form-group">
         <label>Số lượng</label>
-        <input type="number" name="quantity" class="form-control" min="1" required />
+        <input type="number" name="quantity" id="quantity" class="form-control" min="1" required />
+    </div>
+    <div class="form-group">
+        <label>Thành tiền (VNĐ)</label>
+        <input type="text" id="totalPriceDisplay" class="form-control" readonly />
     </div>
     <div class="form-group">
         <label>Ghi chú (nếu có)</label>
@@ -24,3 +34,20 @@
     <button type="submit" class="btn btn-primary mt-2">Thêm</button>
     <a asp-action="CheckOutList" class="btn btn-secondary mt-2">Hủy</a>
 </form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var prices = @Html.Raw(Json.Serialize(priceDict));
+
+    $(document).ready(function() {
+        $('#serviceId, #quantity').on('change keyup', function() {
+            var serviceId = $('#serviceId').val();
+            var quantity = parseInt($('#quantity').val()) || 0;
+            var price = prices[serviceId] || 0;
+            $('#unitPrice').val(price.toLocaleString('vi-VN'));
+            var total = price * quantity;
+            $('#totalPriceDisplay').val(total.toLocaleString('vi-VN'));
+        });
+        $('#serviceId').trigger('change');
+    });
+</script>

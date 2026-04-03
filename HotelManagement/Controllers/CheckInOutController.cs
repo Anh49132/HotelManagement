@@ -207,7 +207,10 @@ namespace HotelManagement.Controllers
                 return RedirectToAction(nameof(CheckOutList));
             }
             ViewBag.BookingId = bookingId;
-            ViewBag.Services = new SelectList(_context.Services, "Id", "Name");
+            var services = await _context.Services.ToListAsync();
+            ViewBag.Services = new SelectList(services, "Id", "Name");
+            // Tạo dictionary giá để view dùng
+            ViewBag.ServicePrices = services.ToDictionary(s => s.Id, s => s.Price);
             return View();
         }
 
