@@ -8,7 +8,7 @@ using HotelManagement.Models.Entities;
 
 namespace HotelManagement.Controllers
 {
-    [Authorize(Roles = "Admin")] // Chỉ Admin mới quản lý dịch vụ
+    [Authorize(Roles = "Admin,Receptionist")] // Chỉ Admin mới quản lý dịch vụ
     public class ServicesController : Controller
     {
         private readonly AppDbContext _context;
