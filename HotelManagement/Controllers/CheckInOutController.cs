@@ -12,7 +12,7 @@ using HotelManagement.Data;
 using HotelManagement.Models.Entities;
 
 namespace HotelManagement.Controllers
-{date
+{
     [Authorize(Roles = "Admin,Receptionist")]
     public class CheckInOutController : Controller
     {
