@@ -1,6 +1,4 @@
-﻿@using HotelManagement.Models.Entities
-
-@model IEnumerable<Booking>
+﻿@model IEnumerable<HotelManagement.Models.Entities.Booking>
 
 @{
     ViewData["Title"] = "Danh sách đặt phòng";
@@ -15,6 +13,7 @@
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
+            <th>Mã đặt phòng</th>
             <th>Khách hàng</th>
             <th>Ngày nhận</th>
             <th>Ngày trả</th>
@@ -23,11 +22,13 @@
             <th>Tổng tiền</th>
             <th>Trạng thái</th>
             <th>Thao tác</th>
+        </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@item.Id</td>
                 <td>@item.Customer?.FullName</td>
                 <td>@item.CheckInDate.ToString("dd/MM/yyyy")</td>
                 <td>@item.CheckOutDate.ToString("dd/MM/yyyy")</td>

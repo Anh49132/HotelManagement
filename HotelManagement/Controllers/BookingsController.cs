@@ -44,12 +44,18 @@ namespace HotelManagement.Controllers
         // ===================== HÀM HỖ TRỢ =====================
 
         // Private: lấy danh sách phòng trống (đổi tên để không trùng với action)
-        private List<Room> GetAvailableRoomsList(DateTime checkIn, DateTime checkOut, int capacity)
+        private List<Room> GetAvailableRoomsList(DateTime checkIn, DateTime checkOut, int capacity, int? roomTypeId = null)
         {
-            var allRooms = _context.Rooms
+            var query = _context.Rooms
                 .Include(r => r.RoomType)
-                .Where(r => r.Status == "Available")
-                .ToList();
+                .Where(r => r.Status == "Available");
+
+            if (roomTypeId.HasValue && roomTypeId.Value > 0)
+            {
+                query = query.Where(r => r.RoomTypeId == roomTypeId.Value);
+            }
+
+            var allRooms = query.ToList();
 
             var bookedRoomIds = _context.BookingDetails
                 .Include(bd => bd.Booking)
@@ -79,12 +85,11 @@ namespace HotelManagement.Controllers
 
         // ===================== AJAX =====================
         [HttpGet]
-        public IActionResult GetAvailableRooms(DateTime checkIn, DateTime checkOut, int capacity)
+        public IActionResult GetAvailableRooms(DateTime checkIn, DateTime checkOut, int capacity, int? roomTypeId)
         {
-            var rooms = GetAvailableRoomsList(checkIn, checkOut, capacity);
+            var rooms = GetAvailableRoomsList(checkIn, checkOut, capacity, roomTypeId);
             return PartialView("_RoomCheckboxes", rooms);
         }
-
         // ===================== CREATE =====================
         // GET: Bookings/Create
         public IActionResult Create()
@@ -97,6 +102,7 @@ namespace HotelManagement.Controllers
                 AvailableRooms = GetAvailableRoomsList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), 1)
             };
             ViewBag.Customers = new SelectList(_context.Customers, "Id", "FullName");
+            ViewBag.RoomTypes = new SelectList(_context.RoomTypes, "Id", "Name");
             return View(model);
         }
         // POST: Bookings/Cre 
@@ -110,6 +116,10 @@ namespace HotelManagement.Controllers
             if (model.SelectedRoomIds == null || !model.SelectedRoomIds.Any())
             {
                 ModelState.AddModelError("", "Vui lòng chọn ít nhất một phòng.");
+            }
+            if (model.CheckOutDate <= model.CheckInDate)
+            {
+                ModelState.AddModelError("CheckOutDate", "Ngày trả phòng phải sau ngày nhận phòng.");
             }
 
             if (ModelState.IsValid)

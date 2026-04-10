@@ -51,6 +51,7 @@ namespace HotelManagement.Controllers
         public IActionResult Create()
         {
             ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "Id", "Id");
+            ViewBag.RoomTypeId = new SelectList(_context.RoomTypes, "Id", "Name");
             return View();
         }
 
